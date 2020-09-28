@@ -10,7 +10,7 @@ install_requires = [
     'PyYAML>=3.10,<5.3',
     'ds-sdk-mini>=0.0.14',
     'smartcheck-sdk-mini>=0.0.12',
-    'cc-sdk-mini>=0.0.6'
+    'cc-sdk-mini>=0.0.7'
 
 ]
 
@@ -22,7 +22,7 @@ setup_options = dict(
     description="A cli tool for use with Trend Micro products.",
     long_description=long_description,
     long_description_content_type="text/markdown",
-    scripts=['bin/thus', 'bin/thus_completer_bash.sh', 'bin/thus_completer_zsh.sh'],
+    scripts=['bin/thus', 'bin/thus_completer_bash.sh', 'bin/thus_completer_zsh.sh', 'bin/thus.bat'],
     url="https://github.com/trendmicro/thus",
     packages=setuptools.find_packages(),
     classifiers=[

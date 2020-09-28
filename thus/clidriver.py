@@ -12,6 +12,7 @@ from inspect import getmembers, isfunction, signature
 import logging
 
 from .session import Session
+from .config import Config
 LOG = logging.getLogger('thus.clidriver')
 LOG_FORMAT = (
     '%(asctime)s - %(threadName)s - %(name)s - %(levelname)s - %(message)s')
@@ -46,8 +47,36 @@ def create_clidriver():
     return driver
 
 def setCLIParse():
-    parser = argparse.ArgumentParser(description='THUS CLI')
-    return parser
+    parser = argparse.ArgumentParser(description='THUS CLI' )
+    # Add the arguments
+    parser.add_argument('--config',
+                           action='store_true',
+                           help='Run configuration')
+    parser.add_argument('--verbose','-v',
+                           action='store_true',
+                           help='Turn on verbose mode')
+    parser.add_argument('--profile',
+                        action='store',
+                        default='default',
+                        help='Profile name to use')
+    parser.add_argument('service',
+                        action='store',
+                        nargs='?',
+                        help='The service you which to address.')
+    parser.add_argument('module',
+                        action='store',
+                        nargs='?',
+                        help='The the module within the service you which to address.')
+    parser.add_argument('function',
+                        action='store',
+                        nargs='?',
+                        help='The function in the module within the service you which to address.')
+    parser.add_argument('function_arguments',
+                        action='store',
+                        nargs='*')
+    t = parser.parse_known_args()
+
+    return t
 
 
 class CLIDriver(object):
@@ -59,11 +88,9 @@ class CLIDriver(object):
             self.session = Session()
         else:
             self.session = session
-        self._cli_data = None
-        self._command_table = None
-        self._argument_table = None
-        self._parser = argparse.ArgumentParser(description='THUS CLI')
-        self._profile = "default"
+        self._args = setCLIParse()
+        self._profile = self._args[0].profile
+        print("Debug")
        # self.alias_loader = AliasLoader()
 
     def parseCliFlag(self, arg):
@@ -72,31 +99,22 @@ class CLIDriver(object):
             self._profile = split[1]
 
     def parseCommand(self):
-        if len(sys.argv) < 2:
-            print("Usage: <service> <module> <command> (sub command arguments)")
-            return
-        j = 1
-        if sys.argv[1].startswith("--"):
-            self.parseCliFlag(arg=sys.argv[1])
-            j = j + 1
-
-        self._command = sys.argv[j+1]
-        for c in self._functions:
-            if c.lower() == self._command.lower():
-                self._command = c
-                break
-
-        self._service = sys.argv[j]
-        self._subcommand = sys.argv[j+2]
+        if self._args[0].config:
+            ConfObj = Config()
+            ConfObj.RunConfig()
+            sys.exit()
+        self._service = self._args[0].service
+        self._command = self._args[0].module
+        self._subcommand = self._args[0].function
         self._arguments = {}
-        i = j+3
-        while sys.argv[i:]:
-            split=sys.argv[i].split("=")
-            if split[0] == 'payload':
-                self._arguments[split[0]] = json.loads(split[1])
-            else:
-                self._arguments[split[0]]=split[1]
-            i=i+1
+
+        if len(self._args[0].function_arguments) > 0:
+            for s in self._args[0].function_arguments:
+                split=s.split("=")
+                if split[0] == 'payload':
+                    self._arguments[split[0]] = json.loads(split[1])
+                else:
+                    self._arguments[split[0]]=split[1]
 
 
 
