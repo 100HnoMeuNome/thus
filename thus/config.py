@@ -23,7 +23,7 @@ class Config(object):
 
     def WriteoutConfig(self):
         if not self._configDirExists:
-            os.mkdir(path=self._configDir ,mode=0o600)
+            os.mkdir(path=self._configDir ,mode=0o700)
 
         if self._configFileExists:
             os.chmod(self._configFile, stat.S_IREAD | stat.S_IWRITE )
@@ -91,7 +91,7 @@ class Config(object):
             else:
                 self._config[self._profileName]['DSMverifyssl'] = 'False'
 
-            self._creds[self._profileName]['DSMapikey'] = self._read_input(promptText="Enter your API key")
+            self._creds[self._profileName]['DSMapikey'] = self._read_input(promptText="Enter your API key: ")
         return
 
     def ConfigWorkloadSecurity(self):
@@ -99,7 +99,7 @@ class Config(object):
         if workloadSecurity.lower() in ['true', '1', 't', 'y','ye', 'yes', 'yeah', 'yup', 'certainly']:
             self._config[self._profileName]['DSMverifyssl'] = 'True'
             self._config[self._profileName]['DSMhost'] = 'https://app.deepsecurity.trendmicro.com/api'
-            self._creds[self._profileName]['DSMapikey'] = self._read_input(promptText="Enter your API key")
+            self._creds[self._profileName]['DSMapikey'] = self._read_input(promptText="Enter your API key: ")
             return True
         return False
 
@@ -120,8 +120,8 @@ class Config(object):
             else:
                 self._config[self._profileName]['SCverifyssl'] = 'False'
 
-            self._creds[self._profileName]['SCUser'] = self._read_input(promptText="Enter your Smart Check user name")
-            self._creds[self._profileName]['SCPassword'] = self._read_input(promptText="Enter your Smart Check password")
+            self._creds[self._profileName]['SCUser'] = self._read_input(promptText="Enter your Smart Check user name: ")
+            self._creds[self._profileName]['SCPassword'] = self._read_input(promptText="Enter your Smart Check password: ")
 
         return
 
@@ -141,9 +141,9 @@ class Config(object):
                 else:
                     print("Please select from one of the available zones.")
             self._config[self._profileName]['CCendpoint'] = host
-            self._creds[self._profileName]['CCapikey'] = self._read_input(promptText="Enter your API key")
+            self._creds[self._profileName]['CCapikey'] = self._read_input(promptText="Enter your API key: ")
 
-    def RunConfig(self):
+    def RunConfig(self, exePath):
         self.ReadExistingConfig()
         self.ConfigProfileName()
         if not self.ConfigWorkloadSecurity():
@@ -151,3 +151,4 @@ class Config(object):
         self.ConfigSmartCheck()
         self.ConfigCloudConformity()
         self.WriteoutConfig()
+        print("Configuration successful.")
