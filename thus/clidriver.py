@@ -16,7 +16,6 @@ from .config import Config
 LOG = logging.getLogger('thus.clidriver')
 LOG_FORMAT = (
     '%(asctime)s - %(threadName)s - %(name)s - %(levelname)s - %(message)s')
-executablePath = ""
 # Don't remove this line.  The idna encoding
 # is used by getaddrinfo when dealing with unicode hostnames,
 # and in some cases, there appears to be a race condition
@@ -34,9 +33,8 @@ def _set_user_agent_for_session(session):
 
 
 def main(exePath):
-    executablePath = exePath
     driver = create_clidriver()
-    rc = driver.main()
+    rc = driver.main(exePath=exePath)
     return rc
 
 def create_clidriver():
@@ -76,7 +74,9 @@ def setCLIParse():
                         action='store',
                         nargs='*')
     t = parser.parse_known_args()
-
+    if len(sys.argv) == 1:
+        parser.print_help()
+        sys.exit(1)
     return t
 
 
@@ -101,7 +101,7 @@ class CLIDriver(object):
     def parseCommand(self):
         if self._args[0].config:
             ConfObj = Config()
-            ConfObj.RunConfig(exePath=executablePath)
+            ConfObj.RunConfig(exePath=self._exePath)
             sys.exit()
         self._service = self._args[0].service
         self._command = self._args[0].module
@@ -172,7 +172,8 @@ class CLIDriver(object):
         except:
             print(results)
 
-    def main(self):
+    def main(self, exePath):
+        self._exePath = exePath
         self.parseCommand()
         results = self.ExecuteCommand()
         self.printResults(results)

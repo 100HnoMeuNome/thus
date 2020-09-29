@@ -10,7 +10,7 @@ import thus.clidriver
 
 def main():
     exePath = os.path.realpath(__file__)
-    return thus.clidriver.main(exePath)
+    return thus.clidriver.main(exePath=exePath)
 
 
 if __name__ == '__main__':

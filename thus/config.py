@@ -2,7 +2,7 @@ import configparser
 import os
 import stat
 from urllib.parse import urlparse
-
+from sys import platform
 
 class Config(object):
     def __init__(self):
@@ -143,6 +143,46 @@ class Config(object):
             self._config[self._profileName]['CCendpoint'] = host
             self._creds[self._profileName]['CCapikey'] = self._read_input(promptText="Enter your API key: ")
 
+    def TabCompletion(self, exePath):
+        completerPath=None
+        lastIndex = exePath.rfind('/')
+        if platform == "linux" or platform == "linux2":
+            script = "/thus_completer_bash.sh"
+            shell = 'bash'
+        elif platform == "darwin":
+            script = "/thus_completer_zsh.sh"
+            shell = 'zsh'
+        elif platform == "win32":
+            # Windows currently does not have a tab completer.
+            shell = 'powershell'
+            return
+        testFilePath = exePath[:lastIndex] + script
+        if os.path.exists(testFilePath):
+            completerPath = testFilePath
+        else:
+            if 'PATH' in os.environ:
+                  paths = os.environ['PATH'].split(':')
+                  for dir in paths:
+                    testFilePath = os.path.expanduser(dir)+script
+                    if os.path.exists(testFilePath):
+                        completerPath = testFilePath
+                        break
+        if completerPath:
+            print("Your tab completion path is: " + completerPath)
+
+            append = self._read_input(promptText="Would you like to edit your shell's rc script to always load the tab completion? ", default="yes")
+            if append.lower() in ['true', '1', 't', 'y', 'ye', 'yes', 'yeah', 'yup', 'certainly']:
+                if shell == 'bash':
+                    fileName = os.path.expanduser('~') + '/.bashrc'
+                    line = '\nsource {}\n'.format(completerPath)
+                elif shell == 'zsh':
+                    fileName = os.path.expanduser('~') + '/.zshrc'
+                    line = '\n$fpath=$fpath:' + completerPath + '\n'
+                with open(fileName, "a") as file:
+                    file.write(line)
+
+
+
     def RunConfig(self, exePath):
         self.ReadExistingConfig()
         self.ConfigProfileName()
@@ -151,4 +191,5 @@ class Config(object):
         self.ConfigSmartCheck()
         self.ConfigCloudConformity()
         self.WriteoutConfig()
+        self.TabCompletion(exePath=exePath)
         print("Configuration successful.")
