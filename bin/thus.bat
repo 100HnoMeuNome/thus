@@ -1,2 +1,2 @@
 @ECHO OFF
-python ./thus %*
+python "%~p0thus" %*
