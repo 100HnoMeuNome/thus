@@ -6,11 +6,14 @@ All replies from the server are in JSON. Therefore [jq](https://stedolan.github.
 
 ### Install the Trend Micro Hybrid Cloud Security Command Line Interface
 
+Generically the install steps are: 
 1.	Ensure you have Python 3.6.x or greater installed
 2.	In the terminal of your choice, enter the following command: 
 3.	To install for your user: `pip3 install --user tm-thus`
-4.	To install globally: `sudo pip3 install tm-thus`
+4.	To install globally (use this for Windows): `sudo pip3 install tm-thus`
 5.	If you're using a virtual environment, set that up first then enter: `pip3 install tm-thus`
+
+Some specific operating system instruction can be found [here](doc/os_install.md)
 
 ## Enable command completion
 
@@ -28,7 +31,20 @@ To enable this on every login, add the command to your `~/.bashrc` file.
 ## Integrate
 
 Before using the CLI tool, you need to provide the credentials and hostnames of your service.
-1.	Create a credentials file: ~/.thus/credentials.
+
+### Guided configuration
+
+You can configure thus by using the command 
+
+`thus --config`
+
+Which will ask a sequence of questions, then write out the configuration files for you.
+ 
+
+### Manual configuration
+
+If you choose to not use the guided method, you will need to create the .thus dir and configuration files credentials and config. 
+1.	Create a credentials file: ~/.thus/credentials
 2.	Enter the following in the file:
 
     [default]
@@ -40,7 +56,7 @@ For DSMapikey, create an API key in the Deep Security Manager by going to Admini
     DSMapikey = E5D08256-1998-21F4-D38B-685ABF6B7CDB:523C4B26-7BD5-D537-9495-1AB2373305DA:OKdUZZIM1ZBVXS
 
 3.	Save and close the credentials file.
-4.	Create a configuration file: ~/.thus/config.
+4.	Create a configuration file: ~/.thus/config
 5.	Enter the following in the file:
 
     [default]
