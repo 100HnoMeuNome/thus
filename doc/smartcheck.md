@@ -32,7 +32,7 @@ For the credentials file in  `~/.thus/credentials`
     [default]
     DSMapikey = F16564D5-492A-F167-5472-2CEDA60E12D7:GDwCvBV2kV7FjSVuYJXdEqeeeu0WKlls3/sqwu+HEXM=
     SCUser = administrator
-    SCPassword =  MySuperPassword   
+    SCPassword = MySuperPassword   
     
 For the configuration file in  `~/.thus/config`    
     
